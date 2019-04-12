@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -9,6 +9,11 @@ import { AdminSigninComponent } from './admin/admin-signin/admin-signin.componen
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 
 import { AdminPropertiesComponent } from './admin/admin-properties/admin-properties.component';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+
+// the second parameter 'fr' is optional
+registerLocaleData(localeFr, 'fr');
 
 @NgModule({
   declarations: [
@@ -24,7 +29,7 @@ import { AdminPropertiesComponent } from './admin/admin-properties/admin-propert
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [{provide: LOCALE_ID, useValue: 'fr-FR' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

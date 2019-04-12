@@ -17,6 +17,16 @@ export class AdminPropertiesComponent implements OnInit, OnDestroy {
   propertiesSubscription: Subscription;
   // tslint:disable-next-line:no-inferrable-types
   editProperty: boolean = false;
+  lastUpdate = new Promise(
+    (resolve, reject) => {
+       const dateNow = new Date();
+       setTimeout(
+         () => {
+           resolve(dateNow);
+         }, 500
+       );
+    }
+  );
 
   constructor(private formbuilder: FormBuilder, private propertiesService: PropertiesService) { }
 
