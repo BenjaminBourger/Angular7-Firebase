@@ -46,4 +46,8 @@ export class PropertiesService {
       this.emitProperties();
     });
   }
+
+  updateProperty(property: Property, id: number) {
+    firebase.database().ref('/properties/' + id).update(property);
+  }
 }
