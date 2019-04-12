@@ -51,6 +51,10 @@ export class AdminPropertiesComponent implements OnInit, OnDestroy {
     this.propertyForm.reset();
   }
 
+  onDeleteProperty(property: Property) {
+    this.propertiesService.removeProperty(property);
+  }
+
   ngOnDestroy() {
     this.propertiesSubscription.unsubscribe();
   }
