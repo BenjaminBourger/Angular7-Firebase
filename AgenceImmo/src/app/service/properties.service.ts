@@ -50,4 +50,42 @@ export class PropertiesService {
   updateProperty(property: Property, id: number) {
     firebase.database().ref('/properties/' + id).update(property);
   }
+
+  uploadFile(file: File) {
+    return new Promise(
+      (resolve, reject) => {
+        const uniqueId = Date.now().toString();
+        const upload = firebase.storage().ref().child('images/properties/' + uniqueId + file.name).put(file);
+        upload.on(firebase.storage.TaskEvent.STATE_CHANGED,
+          () => {
+            console.log('Loading...');
+          },
+          (error) => {
+            console.log('Error ! : ' + error);
+            reject();
+          },
+          () => {
+            upload.snapshot.ref.getDownloadURL().then((downloadURL) => {
+              resolve(downloadURL);
+            });
+          });
+      }
+    );
+  }
+
+  removePropertyPhoto(photoLink: string) {
+    if (photoLink) {
+      const storageRef = firebase.storage().refFromURL(photoLink);
+      storageRef.delete().then(
+        () => {
+          console.log('File deleted');
+        }
+      ).catch(
+        (error) => {
+          console.log('File not found : ' + error);
+        }
+      );
+    }
+  }
+
 }

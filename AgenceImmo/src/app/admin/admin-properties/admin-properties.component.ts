@@ -5,6 +5,7 @@ import { Property } from '../../models/Property.model';
 import * as $ from 'jquery';
 import { Subscription } from 'rxjs';
 
+
 @Component({
   selector: 'app-admin-properties',
   templateUrl: './admin-properties.component.html',
@@ -17,7 +18,14 @@ export class AdminPropertiesComponent implements OnInit, OnDestroy {
   propertiesSubscription: Subscription;
   // tslint:disable-next-line:no-inferrable-types
   editProperty: boolean = false;
+  // tslint:disable-next-line:no-inferrable-types
+  photoUploading: boolean = false;
+  // tslint:disable-next-line:no-inferrable-types
+  photoUrl: string;
+  // tslint:disable-next-line:no-inferrable-types
+  photoUploaded: boolean = false;
   lastUpdate = new Promise(
+    // tslint:disable-next-line:no-shadowed-variable
     (resolve, reject) => {
        const dateNow = new Date();
        setTimeout(
@@ -65,6 +73,9 @@ export class AdminPropertiesComponent implements OnInit, OnDestroy {
     const rooms = this.propertyForm.get('rooms').value;
     const description = this.propertyForm.get('description').value;
     const newProperty = new Property(title, category, surface, rooms, description);
+    if (this.photoUrl && this.photoUrl !== '') {
+      newProperty.photo = this.photoUrl;
+    }
 
     if (this.editProperty === true) {
       this.propertiesService.updateProperty(newProperty, id);
@@ -76,10 +87,15 @@ export class AdminPropertiesComponent implements OnInit, OnDestroy {
     this.propertyForm.reset();
     this.editProperty = false;
     this.resetPropertyForm();
+    this.photoUploaded = false;
+    this.photoUrl = '';
   }
 
   onDeleteProperty(property: Property) {
     this.propertiesService.removeProperty(property);
+    if (property.photo) {
+      this.propertiesService.removePropertyPhoto(property.photo);
+    }
   }
 
   onEditProperty(property: Property, id: number) {
@@ -91,6 +107,17 @@ export class AdminPropertiesComponent implements OnInit, OnDestroy {
     this.propertyForm.get('rooms').setValue(property.rooms);
     this.propertyForm.get('description').setValue(property.description);
     this.editProperty = true;
+  }
+
+  detectFile(event) {
+    this.photoUploading = true;
+    this.propertiesService.uploadFile(event.target.files[0]).then(
+      (url: string) => {
+        this.photoUrl = url;
+        this.photoUploading = false;
+        this.photoUploaded = true;
+      }
+    );
   }
 
   ngOnDestroy() {
